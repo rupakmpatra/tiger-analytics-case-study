@@ -1,0 +1,148 @@
+<p-table [value]="pricingFeedList" dataKey="id.storeId" dataKey="id.sku" editMode="row">
+    <ng-template pTemplate="caption">
+        <div class="caption-container">
+            <span class="caption-label">List of Pricing Feed</span>
+            <p-button class="caption-button" icon="pi pi-plus" label="ADD" (onClick)="onPricingFeedAdd()"></p-button>
+            <p-fileUpload mode="basic" accept=".csv" (onSelect)="onFileUpload($event)" chooseLabel="Import"></p-fileUpload>
+        </div>
+      </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Store ID</th>
+            <th>SKU</th>
+            <th>Product Name</th>
+            <th>Price</th>
+            <th>Date</th>
+            <th>Action</th>
+        </tr>
+        <tr>
+            <th>
+                <input pInputText type="text" (input)="applyFilterOnStoreId($event)" class="p-column-filter">
+            </th>
+            <th>
+                <input pInputText type="text" (input)="applyFilterOnSku($event)" class="p-column-filter">
+            </th>
+            <th>
+                <input pInputText type="text" (input)="applyFilterOnProductName($event)" class="p-column-filter">
+            </th>
+            <th>
+                <p-inputNumber (input)="applyFilterOnPrice($event)" class="p-column-filter"></p-inputNumber>
+            </th>
+            <th>
+                <input pInputText type="text" (input)="applyFilterOnDate($event)" class="p-column-filter">
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
+        <tr [pEditableRow]="rowData">
+            <td>                
+                {{rowData.id.storeId}}
+                   
+            </td>
+            <td>                
+                {{rowData.id.sku}}
+            </td>
+            <td>
+                <p-cellEditor>
+                    <ng-template pTemplate="input">
+                        <input pInputText type="text" [(ngModel)]="rowData.productName">
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{rowData.productName}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td>
+                <p-cellEditor>
+                    <ng-template pTemplate="input">
+                        <p-inputNumber [(ngModel)]="rowData.price" mode="decimal"></p-inputNumber>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{rowData.price}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td>
+                <p-cellEditor>
+                    <ng-template pTemplate="input">
+                        <p-calendar [(ngModel)]="rowData.date"></p-calendar>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{rowData.date}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td style="text-align:center">
+                <p-button class="btnAdd" icon="pi pi-trash" class="ui-button-info"
+                 (onClick)="deletePricingFeed(rowData)"></p-button>
+                <button *ngIf="!editing" pButton type="button" pInitEditableRow icon="pi pi-pencil"
+                    class="ui-button-info" (click)="onRowEditInit(rowData)"></button>
+                <button *ngIf="editing" pButton type="button" pSaveEditableRow icon="pi pi-check"
+                    class="ui-button-success" (click)="onRowEditSave()"></button>
+                <button *ngIf="editing" pButton type="button" pCancelEditableRow icon="pi pi-times"
+                    class="ui-button-danger" (click)="onRowEditCancel()"></button>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+        <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="totalRecords" [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+    </ng-template>
+</p-table>
+
+<p-dialog header="Pricing Feed Details" [(visible)]="displayDialog"
+          [responsive]="true" showEffect="fade" [modal]="true">
+    <form [formGroup]="pricingFeedForm" novalidate>
+        <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="pricingFeed">
+            <div class="ui-g ui-g-12 ui-g-nopad">
+                <div class="ui-g-12 ui-md-3 ui-label">
+                    <label for="storeId">Store ID</label>
+                </div>
+                <div class="ui-g-12 ui-md-9">
+                    <input pInputText id="storeId" name="storeId" required
+                        formControlName="storeId"/>
+                </div>
+            </div>
+            <div class="ui-g ui-g-12 ui-g-nopad">
+                <div class="ui-g-12 ui-md-3 ui-label">
+                    <label for="sku">SKU</label>
+                </div>
+                <div class="ui-g-12 ui-md-9">
+                    <input pInputText id="sku" name="sku" required
+                    formControlName="sku"/>
+                </div>
+            </div>
+            <div class="ui-g ui-g-12 ui-g-nopad">
+                <div class="ui-g-12 ui-md-3 ui-label">
+                    <label for="productName">Product Name</label>
+                </div>
+                <div class="ui-g-12 ui-md-9">
+                    <input pInputText id="productName" name="productName" required
+                    formControlName="productName"/>
+                </div>
+            </div>
+            <div class="ui-g ui-g-12 ui-g-nopad">
+                <div class="ui-g-12 ui-md-3 ui-label">
+                    <label for="price">Price</label>
+                </div>
+                <div class="ui-g-12 ui-md-9">
+                    <p-inputNumber formControlName="price" inputId="price" mode="decimal" [attr.required]="true"></p-inputNumber>
+                </div>
+            </div>
+            <div class="ui-g ui-g-12 ui-g-nopad">
+                <div class="ui-g-12 ui-md-3 ui-label">
+                    <label for="date">Date</label>
+                </div>
+                <div class="ui-g-12 ui-md-9">
+                    <p-calendar formControlName="date" inputId="date" [attr.required]="true"></p-calendar>
+                </div>
+            </div>
+            
+        </div>
+    </form>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button type="submit" pButton icon="fa-check" (click)="savePricingFeed()"
+                    label="Save" [disabled]="!pricingFeedForm.valid"></button>
+        </div>
+    </p-footer>
+    </p-dialog>

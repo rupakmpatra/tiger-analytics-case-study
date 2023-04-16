@@ -1,0 +1,14 @@
+.caption-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .caption-label {
+    flex-grow: 1;
+    text-align: left;
+  }
+  
+  .caption-button {
+    text-align: right;
+  }
+  
